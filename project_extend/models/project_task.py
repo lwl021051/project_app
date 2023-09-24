@@ -55,8 +55,15 @@ class ProjectTask(models.Model):
     def complete_task(self):
         project_stage_list = self.project_id.type_ids.filtered(lambda line: line.code == 'review')
         if project_stage_list:
-            self.stage_id = project_stage_list[0].id
-            self._compute_is_in_progress()
+            return {
+                'type': 'ir.actions.act_window',
+                'name': _('Complete Task'),
+                'res_model': 'project.task.complete.wizard',
+                'view_mode': 'form',
+                'target': 'new',
+                'context': {'active_id': self.id},
+                'views': [[False, 'form']]
+            }
         else:
             raise UserError(_("The Review stage is not in this project. Please add it first."))
 
@@ -79,8 +86,15 @@ class ProjectTask(models.Model):
     def approve_task(self):
         project_stage_list = self.project_id.type_ids.filtered(lambda line: line.code == 'done')
         if project_stage_list:
-            self.stage_id = project_stage_list[0].id
-            self._compute_is_in_progress()
+            return {
+                'type': 'ir.actions.act_window',
+                'name': _('Approve Task'),
+                'res_model': 'project.task.approve.wizard',
+                'view_mode': 'form',
+                'target': 'new',
+                'context': {'active_id': self.id},
+                'views': [[False, 'form']]
+            }
         else:
             raise UserError(_("The Done stage is not in this project. Please add it first."))
 
@@ -120,6 +134,17 @@ class ProjectTask(models.Model):
         timesheets_per_task = {res['task_id'][0]: res['unit_amount'] for res in timesheet_read_group}
         for task in self:
             task.effective_hours = timesheets_per_task.get(task.id, 0.0)
+
+    def write(self, vals):
+        if 'reviewer' in vals:
+            self.message_unsubscribe(self.reviewer.partner_id.ids)
+            user = self.env['res.users'].sudo().browse(vals['reviewer'])
+            if user:
+                self.message_subscribe(user.partner_id.ids)
+            asd = 123
+        result = super(ProjectTask, self).write(vals)
+        return result
+
 
 
 class ProjectTaskRalatedTask(models.Model):

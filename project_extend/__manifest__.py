@@ -18,6 +18,8 @@
         'wizard/project_date_change_wizard_views.xml',
         'wizard/project_task_date_change_wizard_views.xml',
         'wizard/project_task_return_wizard.xml',
+        'wizard/project_task_complete.xml',
+        'wizard/project_task_approve.xml',
     ],
     'assets': {
         'web.assets_backend': [
