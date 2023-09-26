@@ -5,8 +5,6 @@
     "description": "This Module allow add new features to project module",
     "version": "15.0.1.0.1",
     "category": "Project",
-    "author": "Ranga Dharmapriya",
-    "support": "rangadharmapriya@gmail.com",
     "depends": ['sale', 'project', 'hr_timesheet', 'project_task_default_stage', 'sale_timesheet'],
     "data": [
         'security/project_security.xml',
